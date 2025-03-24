@@ -54,8 +54,10 @@ namespace Management.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TaskNo,Name,ToDo,Critical,DateTime,CreatedById,CreatedON,ModifiedById,ModifiedON")] Models.Task task)
+        public async Task<IActionResult> Create(Models.Task task)
         {
+            task.CreatedById = "Macro Code";
+            task.CreatedON = DateTime.Now;
             if (ModelState.IsValid)
             {
                 _context.Add(task);
