@@ -2,7 +2,23 @@
 @model ConfirmEmailModel
 @{
     ViewData["Title"] = "Confirm email";
+    Layout = null;
 }
-
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <script>
+        // Redirect to the login page after 10 seconds
+        setTimeout(function () {
+            window.location.href = '/Identity/Account/Login';
+        }, 10000); // 10000 milliseconds = 10 seconds
+    </script>
+</head>
+<body>
+    <h1>@ViewData["Title"]</h1>
+    <h2>Thank you for confirming your email.</h2>
+    <p>You will be redirected to the login page shortly...</p>
+</body>
+</html>

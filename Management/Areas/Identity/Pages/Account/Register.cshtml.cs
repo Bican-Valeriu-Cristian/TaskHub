@@ -12,10 +12,18 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Build.ObjectModelRemoting;
 using Microsoft.Extensions.Logging;
 
 namespace Management.Areas.Identity.Pages.Account
 {
+    public class MustBeTrueAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object value)
+        {
+            return value is bool b && b;
+        }
+    }
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
@@ -45,6 +53,9 @@ namespace Management.Areas.Identity.Pages.Account
 
         public class InputModel
         {
+            [MustBeTrue(ErrorMessage = "You must agree to the terms.")]
+            public bool AgreeToTerms { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
