@@ -33,14 +33,15 @@
                 <p class="login-box-msg">Register a new account</p>
 
                 <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                    @* <div class="input-group mb-3"> *@
-                    @*     <input type="text" class="form-control" placeholder="Full name"> *@
-                    @*     <div class="input-group-append"> *@
-                    @*         <div class="input-group-text"> *@
-                    @*             <span class="fas fa-user"></span> *@
-                    @*         </div> *@
-                    @*     </div> *@
-                    @* </div> *@
+                    <span asp-validation-for="Input.Username" class="text-danger"></span>
+                    <div class="input-group mb-3">
+                        <input type="text" asp-for="Input.Username" class="form-control" aria-required="true" placeholder="Username">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                    </div>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                     <div class="input-group mb-3">
                         <input type="email" asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Enter your email" />

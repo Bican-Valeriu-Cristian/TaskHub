@@ -22,7 +22,11 @@ namespace Management.Controllers
         // GET: Tasks
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tasks.ToListAsync());
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userTasks = await _context.Tasks
+                .Where(t => t.CreatedById == userId)
+                .ToListAsync();
+            return View(userTasks);
         }
 
         // GET: Tasks/Details/5
@@ -56,7 +60,8 @@ namespace Management.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Models.Task task)
         {
-            task.CreatedById = "Macro Code";
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            task.CreatedById = userId;
             task.CreatedON = DateTime.Now;
             if (ModelState.IsValid)
             {
