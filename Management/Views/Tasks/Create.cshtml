@@ -11,44 +11,61 @@
 <div class="row">
     <div class="col-md-12">
         <form asp-action="Create">
+            @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="TaskNo" class="control-label"></label>
-                <input asp-for="TaskNo" class="form-control" />
-                <span asp-validation-for="TaskNo" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ToDo" class="control-label"></label>
+                <label class="control-label">Description</label>
                 <input asp-for="ToDo" class="form-control" />
                 <span asp-validation-for="ToDo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Critical" class="control-label"></label>
-                <input asp-for="Critical" class="form-control" />
+                <br />
+                <input asp-for="Critical" type="range" min="1" max="10" class="form-range slider-lg" />
                 <span asp-validation-for="Critical" class="text-danger"></span>
+                <span id="critical-value" class="ms-2"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="DateTime" class="control-label"></label>
                 <input asp-for="DateTime" class="form-control" />
                 <span asp-validation-for="DateTime" class="text-danger"></span>
             </div>
-            
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-primary btn-lg px-5">Create</button>
+                <a asp-action="Index" class="btn btn-secondary btn-lg px-5">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        // Show slider value for Critical
+        const criticalInput = document.querySelector('input[name="Critical"]');
+        const criticalValue = document.getElementById('critical-value');
+        if (criticalInput && criticalValue) {
+            const updateValue = () => criticalValue.textContent = criticalInput.value;
+            criticalInput.addEventListener('input', updateValue);
+            updateValue();
+        }
+    </script>
+    
+
+    <style>
+        .slider-lg {
+            width: 100%;
+            max-width: 500px;
+            height: 2.5rem;
+        }
+    </style>
+
 }

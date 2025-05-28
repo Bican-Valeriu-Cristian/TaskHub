@@ -72,13 +72,14 @@ namespace Management.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl = "/Home/Index";
 
             // Prevent redirecting to logout or logout confirmation after login
             if (!string.IsNullOrEmpty(returnUrl) &&
                 (returnUrl.Contains("/Logout") || returnUrl.Contains("/Logoutconfirmation")))
             {
-                returnUrl = Url.Content("~/");
+                returnUrl = "/Home/Index";
+
             }
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -94,7 +95,7 @@ namespace Management.Areas.Identity.Pages.Account
                     if (result.Succeeded)
                     {
                         _logger.LogInformation("User logged in.");
-                        return RedirectToAction("Index", "Tasks");
+                        return LocalRedirect(returnUrl);
                     }
                     if (result.RequiresTwoFactor)
                     {

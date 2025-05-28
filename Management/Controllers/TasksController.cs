@@ -54,8 +54,6 @@ namespace Management.Controllers
         }
 
         // POST: Tasks/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Models.Task task)
@@ -63,6 +61,21 @@ namespace Management.Controllers
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             task.CreatedById = userId;
             task.CreatedON = DateTime.Now;
+            task.Status = Models.TaskStatus.Waiting;
+
+            // Find the last TaskNo for this user and increment
+            var lastTask = await _context.Tasks
+                .Where(t => t.CreatedById == userId)
+                .OrderByDescending(t => t.TaskNo)
+                .FirstOrDefaultAsync();
+
+            int nextNumber = 1;
+            if (lastTask != null)
+            {
+                nextNumber = lastTask.TaskNo + 1;
+            }
+            task.TaskNo = nextNumber;
+
             if (ModelState.IsValid)
             {
                 _context.Add(task);
@@ -89,11 +102,9 @@ namespace Management.Controllers
         }
 
         // POST: Tasks/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,TaskNo,Name,ToDo,Critical,DateTime,CreatedById,CreatedON,ModifiedById,ModifiedON")] Models.Task task)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,TaskNo,Name,ToDo,Critical,DateTime,Status")] Models.Task task)
         {
             if (id != task.Id)
             {
@@ -104,12 +115,21 @@ namespace Management.Controllers
             {
                 try
                 {
+                    // Get the original task from the DB
+                    var originalTask = await _context.Tasks.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
+                    if (originalTask == null)
+                        return NotFound();
+
+                    // Preserve CreatedById and CreatedON
+                    task.CreatedById = originalTask.CreatedById;
+                    task.CreatedON = originalTask.CreatedON;
+
                     _context.Update(task);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TaskExists(task.Id))
+                    if (!_context.Tasks.Any(e => e.Id == task.Id))
                     {
                         return NotFound();
                     }
@@ -154,6 +174,20 @@ namespace Management.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ChangeStatus(int id, Management.Models.TaskStatus status)
+        {
+            var task = _context.Tasks.Find(id);
+            if (task != null)
+            {
+                task.Status = status;
+                _context.SaveChanges();
+                return Ok(); // No redirect, just a 200 OK
+            }
+            return NotFound();
         }
 
         private bool TaskExists(int id)
