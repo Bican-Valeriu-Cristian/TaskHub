@@ -9,7 +9,7 @@
 <p>
     <a asp-action="Create" class="btn btn-primary"><i class="fa fa-plus"></i>    Create New Tasks</a>
 </p>
-<<div class="card">
+<div class="card">
     <div class="card-header">
         <h3 class="card-title">Tasks List</h3>
     </div>
@@ -31,6 +31,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.DateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
             </th>
             
             <th>
@@ -61,6 +64,20 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+            <td>
+                <form asp-action="ChangeStatus" asp-controller="Tasks" method="post" style="display:inline;">
+                    <input type="hidden" name="id" value="@item.Id" />
+                                <select name="status" class="form-select form-select-sm" style="width:auto;display:inline;" onchange="this.form.submit()">
+                        @foreach (var status in Enum.GetValues(typeof(Management.Models.TaskStatus)))
+                        {
+                            <option value="@status" selected="@(item.Status == (Management.Models.TaskStatus)status)">
+                                @status
+                            </option>
+
+                        }
+                    </select>
+                </form>
             </td>
             
             <td>

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Management.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Management.Controllers;
 
@@ -12,7 +13,6 @@ public class HomeController : Controller
     {
         _logger = logger;
     }
-
     public IActionResult Index()
     {
         return !this.User.Identity.IsAuthenticated ? this.Redirect("~/identity/account/login") : View();

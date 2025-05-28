@@ -63,6 +63,21 @@ namespace Management.Controllers
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             task.CreatedById = userId;
             task.CreatedON = DateTime.Now;
+            task.Status = Models.TaskStatus.Waiting;
+
+            // Find the last TaskNo for this user and increment
+            var lastTask = await _context.Tasks
+                .Where(t => t.CreatedById == userId)
+                .OrderByDescending(t => t.TaskNo)
+                .FirstOrDefaultAsync();
+
+            int nextNumber = 1;
+            if (lastTask != null)
+            {
+                nextNumber = lastTask.TaskNo + 1;
+            }
+            task.TaskNo = nextNumber;
+
             if (ModelState.IsValid)
             {
                 _context.Add(task);
@@ -71,6 +86,8 @@ namespace Management.Controllers
             }
             return View(task);
         }
+
+
 
         // GET: Tasks/Edit/5
         public async Task<IActionResult> Edit(int? id)
