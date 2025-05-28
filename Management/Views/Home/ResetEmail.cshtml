@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Reset Email";
+}
+
+<h2>Reset Email</h2>
+
+<form asp-action="ResetEmail" method="post">
+    <div class="form-group">
+        <label for="newEmail">New Email</label>
+        <input type="email" name="newEmail" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="confirmEmail">Confirm Email</label>
+        <input type="email" name="confirmEmail" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-info mt-3 text-white">Reset Email</button>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success mt-3">@TempData["Message"]</div>
+}
+
+@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+{
+    <div class="alert alert-danger mt-3">@error.ErrorMessage</div>
+}

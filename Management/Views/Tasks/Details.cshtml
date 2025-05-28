@@ -23,7 +23,7 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ToDo)
+            Description
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ToDo)
@@ -35,12 +35,13 @@
             @Html.DisplayFor(model => model.Critical)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DateTime)
+            FinishTime
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DateTime)
         </dd>
     </dl>
+
 </div>
 <div class="d-flex justify-content-between">
     <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary btn-lg">Edit</a>

@@ -10,7 +10,34 @@
         var diff = endDate - now;
         return $"{diff.Days}d {diff.Hours}h {diff.Minutes}m left";
     }
+
+    public string GetStatusColor(Management.Models.TaskStatus status)
+    {
+        return status switch
+        {
+            Management.Models.TaskStatus.Waiting => "#0d6efd",      // Blue
+            Management.Models.TaskStatus.InProgress => "#fd7e14",   // Orange
+            Management.Models.TaskStatus.Done => "#198754",         // Green
+            _ => "#6c757d" // Gray fallback
+        };
+    }
+
+    public string GetCriticalBadgeClass(int critical)
+    {
+        return critical switch
+        {
+            1 => "bg-warning text-dark", // yellow
+            2 => "bg-orange text-white", // orange (custom)
+            _ => "bg-danger"             // red for 3 and above
+        };
+    }
 }
+
+<style>
+    .bg-orange {
+        background-color: #fd7e14 !important;
+    }
+</style>
 
 @{
     ViewData["Title"] = "Tasks";
@@ -23,7 +50,7 @@
     {
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                <div class="card-header bg-light">
+                <div class="card-header" style="background-color:@GetStatusColor(status); color: #fff;">
                     <h3 class="card-title mb-0 text-uppercase">@status</h3>
                 </div>
                 <div class="card-body p-2">
@@ -37,7 +64,9 @@
                                         <h4 class="mb-1">@item.Name</h4>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <h5 class="mb-1">@item.ToDo</h5>
-                                            <span class="badge bg-danger ms-2">Critical: @item.Critical</span>
+                                            <span class="badge @GetCriticalBadgeClass(item.Critical) ms-2">
+                                                Critical: @item.Critical
+                                            </span>
                                         </div>
                                         <div class="text-muted mt-2">
                                             <small>@GetTimeRemaining(item.DateTime)</small>
