@@ -7,7 +7,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
-// aa
+
 namespace Management.Controllers
 {
     public class HomeController : Controller
@@ -34,7 +34,10 @@ namespace Management.Controllers
             if (!this.User.Identity.IsAuthenticated)
                 return this.Redirect("~/identity/account/login");
 
-            var tasks = _context.Tasks.ToList();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var tasks = _context.Tasks
+                .Where(t => t.CreatedById == userId)
+                .ToList();
             return View(tasks);
         }
 
@@ -92,12 +95,10 @@ namespace Management.Controllers
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-
             if (result.Succeeded)
             {
-                TempData["Message"] = "Password reset successfully. Please log in again.";
                 await _signInManager.SignOutAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("ResetPassword", new { message = "Password reset successfully. Please log in again." });
             }
             else
             {
@@ -142,9 +143,8 @@ namespace Management.Controllers
 
             if (result.Succeeded)
             {
-                TempData["Message"] = "Email changed successfully. Please log in again.";
                 await _signInManager.SignOutAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { message = "Email changed successfully. Please log in again." });
             }
             else
             {

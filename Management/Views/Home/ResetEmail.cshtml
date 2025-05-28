@@ -16,9 +16,9 @@
     <button type="submit" class="btn btn-info mt-3 text-white">Reset Email</button>
 </form>
 
-@if (TempData["Message"] != null)
+@if (!string.IsNullOrEmpty(Context.Request.Query["message"]))
 {
-    <div class="alert alert-success mt-3">@TempData["Message"]</div>
+        <div class="alert alert-success mt-3">@Context.Request.Query["message"]</div>
 }
 
 @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
